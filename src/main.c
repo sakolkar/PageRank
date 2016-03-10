@@ -1,21 +1,3 @@
-/*
-    Test the result stored in "data_output" against a serial implementation.
-
-    -----
-    Compiling:
-    Include "Lab4_IO.c" to compile. Set the macro "LAB4_EXTEND" defined in the "Lab4_IO.c" file to include the extended functions
-    $ gcc serialtester.c Lab4_IO.c -o serialtester -lm 
-
-    -----
-    Return values:
-    0      result is correct
-    1      result is wrong
-    2      problem size does not match
-    253    no "data_output" file
-    254    no "data_input" file
-*/
-#define LAB4_EXTEND
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -23,7 +5,6 @@
 
 #define EPSILON 0.00001
 #define DAMPING_FACTOR 0.85
-
 #define THRESHOLD 0.0001
 
 int main (int argc, char* argv[]){
