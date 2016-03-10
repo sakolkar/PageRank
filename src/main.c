@@ -5,6 +5,7 @@
 #include <math.h>
 #include "Lab4_IO.h"
 #include "timer.h"
+#include "mpi.h"
 
 #define EPSILON 0.00001
 #define DAMPING_FACTOR 0.85
