@@ -1,5 +1,5 @@
 main:
-	@mpicc -g -Wall -std=C99 -o main src/main.c src/Lab4_IO.c
+	@mpicc -g -Wall -lm -o main src/main.c src/Lab4_IO.c
 
 datatrim:
 	@gcc -o datatrim src/datatrim.c
