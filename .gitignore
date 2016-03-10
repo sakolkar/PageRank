@@ -1,0 +1,8 @@
+main
+datatrim
+serialtester
+data_input
+data_output
+
+*.swo
+*.swp
