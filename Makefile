@@ -1,5 +1,5 @@
 main:
-	@gcc -g -Wall -o main src/main.c src/Lab4_IO.c -lm
+	@mpicc -g -Wall -o main src/main.c src/Lab4_IO.c -lm
 
 datatrim:
 	@gcc -o datatrim src/datatrim.c
