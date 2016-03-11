@@ -31,12 +31,9 @@ int main (int argc, char* argv[]){
 
     if (get_node_stat(&nodecount, &num_in_links, &num_out_links)) return 254;
 
-    int lower_bound = nodecount*my_rank / comm_sz;
-    int upper_bound = nodecount*(my_rank+1) / comm_sz;
-    int nodecount_local = nodecount / comm_sz;
-
-    printf("comm: %d, my rank: %d\n", comm_sz, my_rank);
-    printf("lower bound: %d, upper bound: %d, nodecount_local: %d\n", lower_bound, upper_bound, nodecount_local);
+    int lower_bound = nodecount*my_rank / comm_sz; //Lower bound for each node
+    int upper_bound = nodecount*(my_rank+1) / comm_sz; //Upper bound for each node
+    int nodecount_local = nodecount / comm_sz; //Amount of nodes each thread receives
 
     if (node_init(&nodehead, num_in_links, num_out_links, lower_bound, upper_bound)) return 254;
 
@@ -70,6 +67,7 @@ int main (int argc, char* argv[]){
     GET_TIME(end);
 
     MPI_Finalize();
+
     // post processing
     if(my_rank == 0) {
         Lab4_saveoutput(r, nodecount, end-start);
