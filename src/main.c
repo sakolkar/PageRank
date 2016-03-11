@@ -29,12 +29,16 @@ int main (int argc, char* argv[]){
     MPI_Comm_size(comm, &comm_sz);
     MPI_Comm_rank(comm, &my_rank);
 
+    if (get_node_stat(&nodecount, &num_in_links, &num_out_links)) return 254;
+
     int lower_bound = nodecount*my_rank / comm_sz;
     int upper_bound = nodecount*(my_rank+1) / comm_sz;
     int nodecount_local = nodecount / comm_sz;
 
-    if (get_node_stat(&nodecount, &num_in_links, &num_out_links)) return 254;
-    if (node_init(&nodehead, num_in_links, num_out_links, 0, nodecount)) return 254;
+    printf("comm: %d, my rank: %d\n", comm_sz, my_rank);
+    printf("lower bound: %d, upper bound: %d, nodecount_local: %d\n", lower_bound, upper_bound, nodecount_local);
+
+    if (node_init(&nodehead, num_in_links, num_out_links, lower_bound, upper_bound)) return 254;
 
     r = malloc(nodecount * sizeof(double));
     r_pre = malloc(nodecount * sizeof(double));
@@ -52,12 +56,12 @@ int main (int argc, char* argv[]){
        ++iterationcount;
         vec_cp(r, r_pre, nodecount);
 
-        for ( i = lower_bound; i < upper_bound; ++i){
-            r_local[i-lower_bound] = 0;
+        for ( i = 0; i < nodecount_local; ++i){
+            r_local[i] = 0;
             for ( j = 0; j < nodehead[i].num_in_links; ++j)
-                r_local[i-lower_bound] += r_pre[nodehead[i].inlinks[j]] / num_out_links[nodehead[i].inlinks[j]];
-            r_local[i-lower_bound] *= DAMPING_FACTOR;
-            r_local[i-lower_bound] += damp_const;
+                r_local[i] += r_pre[nodehead[i].inlinks[j]] / num_out_links[nodehead[i].inlinks[j]];
+            r_local[i] *= DAMPING_FACTOR;
+            r_local[i] += damp_const;
         }
 
         MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, comm);
@@ -71,7 +75,7 @@ int main (int argc, char* argv[]){
         Lab4_saveoutput(r, nodecount, end-start);
     }
 
-    node_destroy(nodehead, nodecount);
+    node_destroy(nodehead, nodecount_local);
     free(num_in_links); free(num_out_links);
 
     return 0;
