@@ -69,7 +69,7 @@ int main (int argc, char* argv[]){
         if(my_rank == 0) {
 
             for(i = 0; i < nodecount_local; ++i){
-                 r[i] = r_local[i];
+                r[i] = r_local[i];
             }
 
             for(iter = 1; iter < comm_sz; iter++) {
@@ -78,7 +78,7 @@ int main (int argc, char* argv[]){
 //                printf("received!\n");
             }
 
-        for(iter = 1; iter < comm_sz; iter++) {
+            for(iter = 1; iter < comm_sz; iter++) {
 //                printf("sending to rank %d...\n", iter); 
                 MPI_Send(r, nodecount, MPI_DOUBLE, iter, 2, comm);
 //                printf("Sent to rank %d!\n", iter);
