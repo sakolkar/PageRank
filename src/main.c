@@ -29,6 +29,8 @@ int main (int argc, char* argv[]){
     MPI_Comm_size(comm, &comm_sz);
     MPI_Comm_rank(comm, &my_rank);
 
+    printf("comm_sz is: %d, my rank is: %d\n", comm_sz, my_rank);
+
     if (get_node_stat(&nodecount, &num_in_links, &num_out_links)) return 254;
 
     int lower_bound = nodecount*my_rank / comm_sz; //Lower bound for each node
@@ -60,9 +62,26 @@ int main (int argc, char* argv[]){
             r_local[i] *= DAMPING_FACTOR;
             r_local[i] += damp_const;
         }
+	if(my_rank != 0) {
+            printf("Sending...\n");
+            MPI_Send(r_local, nodecount_local, MPI_DOUBLE, 0, 0, comm);
+            printf("Sent!\n");
+        }
+//        MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, comm);
+        if(my_rank == 0) {
+            for(i = 0; i < nodecount_local; ++i){
+                 r[i] = r_local[i];
+            }
+        }
 
-        MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, comm);
-        
+        int iter;
+        if(my_rank == 0) {
+            for(iter = 1; iter < comm_sz; iter++) {
+	        printf("waiting... iter is: %d, my rank is: %d\n", iter, my_rank);
+                MPI_Recv(r, nodecount_local, MPI_DOUBLE, iter, 0, comm, MPI_STATUS_IGNORE);
+	        printf("received!\n");
+            }
+        }  
     }while(rel_error(r, r_pre, nodecount) >= EPSILON);
     GET_TIME(end);
 
