@@ -63,7 +63,7 @@ int main (int argc, char* argv[]){
         }
 
 
-        MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, comm);
+//        MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, comm);
 
         int iter;
         if(my_rank == 0) {
