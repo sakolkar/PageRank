@@ -47,6 +47,7 @@ int main (int argc, char* argv[]){
 
     damp_const = (1.0 - DAMPING_FACTOR) / nodecount;
 
+    MPI_Scatter(r_local, nodecount_local, MPI_DOUBLE, r_local, nodecount_local, MPI_DOUBLE, 0, comm);
 
     GET_TIME(start);
     // CORE CALCULATION
@@ -63,39 +64,39 @@ int main (int argc, char* argv[]){
             r_local[i] += damp_const;
         }
 
-//      MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, comm);
+        MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, comm);
 
-        int iter;
-        if(my_rank == 0) {
+//        int iter;
+//        if(my_rank == 0) {
 
-            for(i = 0; i < nodecount_local; ++i){
-                r[i] = r_local[i];
-            }
+//          for(i = 0; i < nodecount_local; ++i){
+//                r[i] = r_local[i];
+//            }
 
-            for(iter = 1; iter < comm_sz; iter++) {
-//                printf("waiting... iter is: %d, my rank is: %d\n", iter, my_rank);
-                MPI_Recv(&r[nodecount_local*iter], nodecount_local, MPI_DOUBLE, iter, 1, comm, MPI_STATUS_IGNORE);
-//                printf("received!\n");
-            }
-
-            for(iter = 1; iter < comm_sz; iter++) {
-//                printf("sending to rank %d...\n", iter); 
-                MPI_Send(r, nodecount, MPI_DOUBLE, iter, 2, comm);
-//                printf("Sent to rank %d!\n", iter);
-            }
-
-        } else {
-
-//            printf("Sending...\n");
-            MPI_Send(r_local, nodecount_local, MPI_DOUBLE, 0, 1, comm);
-//            printf("Sent!\n");
-
-//            printf("rank %d waiting for rank 0...\n", my_rank);
-            MPI_Recv(r, nodecount, MPI_DOUBLE, 0, 2, comm, MPI_STATUS_IGNORE);
-//        printf("process %d received from rank 0!\n", my_rank);
-        }
-
-
+//          for(iter = 1; iter < comm_sz; iter++) {
+////                printf("waiting... iter is: %d, my rank is: %d\n", iter, my_rank);
+  //              MPI_Recv(&r[nodecount_local*iter], nodecount_local, MPI_DOUBLE, iter, 1, comm, MPI_STATUS_IGNORE);
+////                printf("received!\n");
+//            }
+//
+//            for(iter = 1; iter < comm_sz; iter++) {
+////                printf("sending to rank %d...\n", iter); 
+//                MPI_Send(r, nodecount, MPI_DOUBLE, iter, 2, comm);
+////                printf("Sent to rank %d!\n", iter);
+//            }
+//
+//        } else {
+//
+////            printf("Sending...\n");
+//            MPI_Send(r_local, nodecount_local, MPI_DOUBLE, 0, 1, comm);
+////            printf("Sent!\n");
+//
+////            printf("rank %d waiting for rank 0...\n", my_rank);
+//            MPI_Recv(r, nodecount, MPI_DOUBLE, 0, 2, comm, MPI_STATUS_IGNORE);
+////        printf("process %d received from rank 0!\n", my_rank);
+//        }
+//
+//
     }while(rel_error(r, r_pre, nodecount) >= EPSILON);
 
 
