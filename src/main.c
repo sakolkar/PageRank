@@ -45,8 +45,6 @@ int main (int argc, char* argv[]){
 
     damp_const = (1.0 - DAMPING_FACTOR) / nodecount;
 
-//    MPI_Scatter(r, nodecount_local, MPI_DOUBLE, r_local, nodecount_local, MPI_DOUBLE, 0, comm);
-
     GET_TIME(start);
     // CORE CALCULATION
     do{ 
@@ -62,9 +60,10 @@ int main (int argc, char* argv[]){
             r_local[i] += damp_const;
         }
 
-
+        //Verison 1
         MPI_Allgather(r_local, nodecount_local, MPI_DOUBLE, r, nodecount_local, MPI_DOUBLE, comm);
 /*
+        //Version 2
         int iter;
         if(my_rank == 0) {
 
